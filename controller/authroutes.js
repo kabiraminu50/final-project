@@ -1,46 +1,117 @@
+const User = require('../models/user')
+const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken')
+
+
+
 //registration
 const register = async (req,res) => {
 try{
       // cheaking if login data is exist
     const {username,email,password} = req.body
-    const user = await user.findOne({username})
-    const dualEmail = await user.findOne({email})
+    const existingUser = await User.findOne({$or:[{username},{email}]})
+    
 
-
-    if (username){
+    if (existingUser){
         res.status(400).json({
             success:false,
-            message:"username already exist"
+            message:"username or email already exist"
         })
     }
 
-if (dualEmail){
-    res.status(400).json({
-        success:false,
-        message:'email already exist'
-    })
-}
+await User.create({username,email,password})
 
-await user({username,email,password}).save()
-
-return res.status(200).json({
+ res.status(200).json({
     success:true,
     message:"user created successfully"
 })
 
+
 }
 catch(err){
-res.status(500).json({
+
+   return res.status(500).json({
     success:false,
     message:err.message
 })
 }
-
-
 
 }
 
 
 //login to user profile
 
+const login = async (req,res) => {
+    try{
+        const {username,password} = req.body
+        const user = await User.findOne({username})
+        if (!username){
+            return res.status(400).json({
+                success:false,
+                message:'invalid username'
+            })
+        }
+
+        if (user.password !== password){
+
+            return res.status(400).json({
+                success:false,
+                message:"incorrect password"
+            })
+        }
+
+// Generatin jwt
+
+const token = jwt.sign({id:user._id},"digitalRegenesys",{expiresIn:'5h'})
+
+return res.status(200).json({
+    token
+})
+        
+
+
+    }catch(err){
+        return res.status(500).json({
+            success:false,
+            message:err.message
+        })
+    }
+}
+
+
+
+
+
 // Access User Profile
+
+const prof = async (req,res) => {
+    try{
+
+        const id = req.user.id
+
+        const user = await User.findById(id).select('-password')
+
+        if (!user){
+
+            return res.status(400).json({
+                success:false,
+                message: 'user not found'
+            })
+        }
+         
+        return res.status(200).json({
+            success:true,
+            user
+        })
+
+
+
+    }catch(err){
+        return res.status(500).json({
+            success:false,
+            message:err.message
+        })
+    }
+}
+
+module.exports = {register,login,prof}
