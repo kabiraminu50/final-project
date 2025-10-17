@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 
 
 const authMiddleware = async (req,res,next) => {
-const token = req.header.authorazation?.split(' ')[1]
+const token = req.headers.authorization?.split(' ')[1]
 
 if (!token){
 
@@ -19,7 +19,7 @@ if (!token){
 
     }catch(err){
 
-        return res.status(500).json({
+        return res.status(401).json({
             success:false,
             message:err.message
         })
