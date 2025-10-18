@@ -4,6 +4,7 @@ const { post } = require('../routes/userAuthRoutes');
 
 // creating new blog
 const createBlogPost   = async (req,res) =>{
+try{
 
 const {title,subtitle,content} = req.body  
 if (!title || !subtitle || !content ){
@@ -19,6 +20,14 @@ return res.status(201).json({
     message:"new post created",
     data:newPost
 })
+
+}catch(err){
+
+    return res.status(500).json({
+        success:false,
+        message:err.message
+    })
+}
 
 }
 
@@ -42,21 +51,29 @@ try{
   
     return res.status(500).json({
         success:false,
-        err:message
+        err:err.message
     })
 }
 
 }
+
+//fetching single post
 
 const getSinglePost = async (req,res) => {
 
 try{
 
 const post = await BlogPost.findById(req.params.id)
+if (!post){
+    return res.status(404).json({
+        success:false,
+        message:'post not found'
+    })
+}
+
 
 return res.status(200).json({
     success:true,
-    count:post.length,
     data:post
 })
 
@@ -80,7 +97,7 @@ const deleteBlogPost = async (req,res) => {
         const post = await BlogPost.findByIdAndDelete(req.params.id)
             if (!post){
  
-                return res.status(400).json({
+                return res.status(404).json({
                     success:false,
                     message:'post delete is unsucessfull'
                 })
@@ -104,8 +121,17 @@ const deleteBlogPost = async (req,res) => {
 const updateBlogPost = async (req,res) => {
 
     try{
-        const updatePost = await BlogPost.findByIdAndUpdate(req.params.id)
-         
+        const {title,subtitle,content} = req.body
+
+        const updatePost = await BlogPost.findByIdAndUpdate(req.params.id,{title,subtitle,content},{new:true,runValidators:true})
+         if (!updatePost){
+            
+            return res.status(404).json({
+                success:false,
+                message:'post not found'
+
+            })
+         }
 
         return res.status(200).json({
             success:true,

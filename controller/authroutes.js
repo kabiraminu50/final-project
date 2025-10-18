@@ -4,18 +4,20 @@ const jwt = require('jsonwebtoken')
 
 
 
-//registration
+//user signUp
 const signUp = async (req,res) => {
 try{
-      // cheaking if login data is exist
+    
     const {username,email,password} = req.body
+
+      // cheaking if login data is exist
     const existingUser = await User.findOne({$or:[{username},{email}]})
     
 
     if (existingUser){
         res.status(400).json({
             success:false,
-            message:"username or email already exist"
+            message:"username or email already singup"
         })
     }
 
@@ -101,7 +103,7 @@ const prof = async (req,res) => {
          
         return res.status(200).json({
             success:true,
-            user
+            data:user
         })
 
 

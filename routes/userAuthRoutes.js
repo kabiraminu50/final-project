@@ -7,4 +7,5 @@ router.post('/signup',signUp);
 router.post('/login',login);
 router.get('/prof',authMiddleware,prof)
 
+
 module.exports = router

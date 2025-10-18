@@ -6,9 +6,12 @@ app.use(express.json());
 const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 connectDB()
-const userAuthRoutes = require('./routes/userAuthRoutes')
+const userAuthRoutes = require('./routes/userAuthRoutes');
+const blogPostController = require('./controller/blogPostController')
 
 app.use('/api/auth',userAuthRoutes)
+
+app.use('/api/post',blogPostController)
 
 app.get('/',(req,res) => {
     res.send('Blog is running')  
