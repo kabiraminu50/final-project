@@ -14,7 +14,8 @@ unique:true
     },
     password:{
         required:true,
-        type:String
+        type:String,
+        minlenth:6
     }
 },  {timestamps:true})
 

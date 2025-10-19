@@ -1,7 +1,7 @@
 const User = require('../models/user')
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
-
+const bcrypt = require('bcrypt')
 
 
 //user signUp
@@ -15,15 +15,26 @@ try{
     
 
     if (existingUser){
-        res.status(400).json({
+       return res.status(400).json({
             success:false,
             message:"username or email already singup"
         })
     }
+// Hash password
 
-await User.create({username,email,password})
+const saltRounds = 10;
+const hashedPassword = await bcrypt.hash(password,saltRounds)
 
-return res.status(200).json({
+
+// create new user
+
+await User.create({username,email,password:hashedPassword})
+
+
+
+
+
+return res.status(201).json({
     success:true,
     message:"user created successfully"
 })
@@ -54,7 +65,8 @@ const login = async (req,res) => {
             })
         }
 
-        if (user.password !== password){
+const isMatch = await bcrypt.compare(password,user.password)
+        if (!isMatch){
 
             return res.status(400).json({
                 success:false,
