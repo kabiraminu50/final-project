@@ -1,4 +1,4 @@
-const BlogPost = require('../models/blogPost');
+const BlogPost = require('../models/blogPost')
 const mongoose = require('mongoose');
 const { post } = require('../routes/userAuthRoutes');
 

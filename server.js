@@ -7,11 +7,11 @@ const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 connectDB()
 const userAuthRoutes = require('./routes/userAuthRoutes');
-const blogPostRoutes = require('./routes/blogPostRoute')
+const blogPostRoute = require('./routes/blogPostRoute')
 
 app.use('/api/auth',userAuthRoutes)
 
-app.use('/api/post',blogPostRoutes)
+app.use('/api/post',blogPostRoute)
 
 app.get('/',(req,res) => {
     res.send('Blog is running')  

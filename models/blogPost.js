@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const blogPost = new mongoose.Schema({
+const blogPostSchema = new mongoose.Schema({
     title:{
         type:String,
         required:true
@@ -20,4 +20,5 @@ const blogPost = new mongoose.Schema({
 
 
 }, {timestamps:true})
-module.exports = mongoose.Schema('blogPost',blogPostSchema)
+
+module.exports = mongoose.model('blogPsst',blogPostSchema)

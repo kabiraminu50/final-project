@@ -13,7 +13,7 @@ if (!token){
 }
 
    try{
-        const decoded = jwt.verify(token,'digitalregenesys')
+        const decoded = jwt.verify(token,'digitalRegenesys')
         req.user = decoded
         next()
 
