@@ -1,12 +1,16 @@
-const BlogPost = require('../models/blogPost')
-const mongoose = require('mongoose');
-const { post } = require('../routes/userAuthRoutes');
+const BlogPost = require('../models/blogPost');
 
 // creating new blog
 const createBlogPost   = async (req,res) =>{
 try{
 
-const {title,subtitle,content} = req.body  
+const {title,subtitle,content} = req.body 
+const file = req.file;
+
+console.log('body',req.body)
+console.log('file',req.file)
+
+
 if (!title || !subtitle || !content ){
     return res.status(400).json({ 
         success:false,
@@ -14,7 +18,23 @@ if (!title || !subtitle || !content ){
     })
 }
 
-const newPost = await BlogPost.create({title,subtitle,content})
+
+
+const newPostData = {title,subtitle,content};
+
+
+
+
+// if an image  was upload, add it to the object
+if (file) {
+    newPostData.image = {
+        data:file.buffer,
+        contentType:file.mimetype
+
+    }
+}
+
+const newPost = await BlogPost.create(newPostData)
 return res.status(201).json({
     success:true,
     message:"new post created",

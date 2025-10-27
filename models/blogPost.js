@@ -15,6 +15,10 @@ const blogPostSchema = new mongoose.Schema({
         required:true
 
     },
+    image:{
+        data:Buffer,
+        contentType:String
+    },
     author:{ type: mongoose.Schema.Types.ObjectId, 
         ref: 'user'}
 

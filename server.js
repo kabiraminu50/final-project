@@ -5,9 +5,11 @@ require('dotenv').config();
 app.use(express.json());
 const mongoose = require('mongoose');
 const connectDB = require('./config/db');
+const multer = require('multer')
 connectDB()
 const userAuthRoutes = require('./routes/userAuthRoutes');
 const blogPostRoute = require('./routes/blogPostRoute')
+
 
 app.use('/api/auth',userAuthRoutes)
 
