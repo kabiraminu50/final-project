@@ -1,174 +1,146 @@
 const BlogPost = require('../models/blogPost');
 
-// creating new blog
-const createBlogPost   = async (req,res) =>{
-try{
+// Create new blog post
+const createBlogPost = async (req, res) => {
+  try {
+    const { title, subtitle, content } = req.body;
+    const file = req.file;
 
-const {title,subtitle,content} = req.body 
-const file = req.file;
+    console.log('body', req.body);
+    console.log('file', req.file);
 
-console.log('body',req.body)
-console.log('file',req.file)
-
-
-if (!title || !subtitle || !content ){
-    return res.status(400).json({ 
-        success:false,
-        message:'All field (title,subtitle,content) are required'
-    })
-}
-
-
-
-const newPostData = {title,subtitle,content};
-
-
-
-
-// if an image  was upload, add it to the object
-if (file) {
-    newPostData.image = {
-        data:file.buffer,
-        contentType:file.mimetype
-
+    if (!title || !subtitle || !content) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields (title, subtitle, content) are required'
+      });
     }
-}
 
-const newPost = await BlogPost.create(newPostData)
-return res.status(201).json({
-    success:true,
-    message:"new post created",
-    data:newPost
-})
+    const newPostData = { title, subtitle, content };
 
-}catch(err){
+    if (file) {
+      newPostData.image = `/uploads/${file.filename}`;
+    }
 
+    const newPost = await BlogPost.create(newPostData);
+
+    return res.status(201).json({
+      success: true,
+      message: "Post created successfully",
+      data: newPost
+    });
+
+  } catch (err) {
     return res.status(500).json({
-        success:false,
-        message:err.message
-    })
-}
+      success: false,
+      message: err.message
+    });
+  }
+};
 
-}
+// Fetch all posts
+const getAllPost = async (req, res) => {
+  try {
+    const posts = await BlogPost.find().sort({ createdAt: -1 });
 
-//fechting all post
-
-const getAllPost = async (req,res) => {
-
-try{
-
-    const post = await BlogPost.find().sort({createdAt: -1})
-  
     return res.status(200).json({
-    success:true,
-    count:post.length,
-    data:post
+      success: true,
+      count: posts.length,
+      data: posts
+    });
 
-    })
-
-}catch(err){
-    
-  
+  } catch (err) {
     return res.status(500).json({
-        success:false,
-        err:err.message
-    })
-}
+      success: false,
+      message: err.message
+    });
+  }
+};
 
-}
+// Fetch single post
+const getSinglePost = async (req, res) => {
+  try {
+    const post = await BlogPost.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
+    }
 
-//fetching single post
+    return res.status(200).json({
+      success: true,
+      data: post
+    });
 
-const getSinglePost = async (req,res) => {
-
-try{
-
-const post = await BlogPost.findById(req.params.id)
-if (!post){
-    return res.status(404).json({
-        success:false,
-        message:'post not found'
-    })
-}
-
-
-return res.status(200).json({
-    success:true,
-    data:post
-})
-
-}catch(err){
-
-    
+  } catch (err) {
     return res.status(500).json({
-        success:false,
-        message:err.message
-    })
-}
+      success: false,
+      message: err.message
+    });
+  }
+};
 
-}
-
-
-const deleteBlogPost = async (req,res) => {
-
-    try{
-    
-
-        const post = await BlogPost.findByIdAndDelete(req.params.id)
-            if (!post){
- 
-                return res.status(404).json({
-                    success:false,
-                    message:'post delete is unsucessfull'
-                })
-        }
-        
-        return res.status(200).json({
-            success:true,
-            message:'post deleted successfully'
-
-        })
-
+// Delete post
+const deleteBlogPost = async (req, res) => {
+  try {
+    const post = await BlogPost.findByIdAndDelete(req.params.id);
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post deletion unsuccessful'
+      });
     }
-    catch(err){
-        return res.status(500).json({
-            success:false,
-            message:err.message
-        })
+
+    return res.status(200).json({
+      success: true,
+      message: 'Post deleted successfully'
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+};
+
+// Update post
+const updateBlogPost = async (req, res) => {
+  try {
+    const { title, subtitle, content } = req.body;
+
+    const updatedPost = await BlogPost.findByIdAndUpdate(
+      req.params.id,
+      { title, subtitle, content },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedPost) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
     }
-}
 
-const updateBlogPost = async (req,res) => {
+    return res.status(200).json({
+      success: true,
+      message: 'Post updated successfully',
+      data: updatedPost
+    });
 
-    try{
-        const {title,subtitle,content} = req.body
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+};
 
-        const updatePost = await BlogPost.findByIdAndUpdate(req.params.id,{title,subtitle,content},{new:true,runValidators:true})
-         if (!updatePost){
-            
-            return res.status(404).json({
-                success:false,
-                message:'post not found'
-
-            })
-         }
-
-        return res.status(200).json({
-            success:true,
-            message:'post updated',
-            data:updatePost
-        })
-
-    }catch(err){
-
-        return res.status(500).json({
-            success:false,
-            message:err.message,
-    
-        })
-    }
-}
-
-
-
-module.exports = {createBlogPost,getAllPost,getSinglePost,deleteBlogPost,updateBlogPost}
+module.exports = {
+  createBlogPost,
+  getAllPost,
+  getSinglePost,
+  deleteBlogPost,
+  updateBlogPost
+};
