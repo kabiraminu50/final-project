@@ -28,15 +28,16 @@ const hashedPassword = await bcrypt.hash(password,saltRounds)
 
 // create new user
 
-await User.create({username,email,password:hashedPassword})
+const newUser = await User.create({username,email,password:hashedPassword})
 
-
+const token = jwt.sign({ id: newUser._id},"digitalRegenesys",{expiresIn:"5h"})
 
 
 
 return res.status(201).json({
     success:true,
-    message:"user created successfully"
+    message:"user created successfully",
+    token
 })
 
 
