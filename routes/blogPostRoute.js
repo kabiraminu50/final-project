@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const path = require('path')
 const authMiddleware = require('../middleware/authMiddleware');
 const { createBlogPost, getAllPost, getSinglePost, deleteBlogPost, updateBlogPost } = require('../controller/blogPostController');
 const upload = require('../middleware/upload')

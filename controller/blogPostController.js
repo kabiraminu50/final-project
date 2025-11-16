@@ -4,10 +4,16 @@ const BlogPost = require('../models/blogPost');
 const createBlogPost = async (req, res) => {
   try {
     const { title, subtitle, content } = req.body;
-    const file = req.file;
+    
 
-    console.log('body', req.body);
-    console.log('file', req.file);
+if(!req.file){
+  return res.status(400).json({
+    success:false,
+    message: "image is required"
+  })
+}
+
+
 
     if (!title || !subtitle || !content) {
       return res.status(400).json({
@@ -16,13 +22,17 @@ const createBlogPost = async (req, res) => {
       });
     }
 
-    const newPostData = { title, subtitle, content };
+const imageUrl = req.file.path;
 
-    if (file) {
-      newPostData.image = `/uploads/${file.filename}`;
-    }
+    
 
-    const newPost = await BlogPost.create(newPostData);
+  
+    const newPost = await BlogPost.create({
+      title,
+      subtitle,
+      content,
+      imageUrl
+    });
 
     return res.status(201).json({
       success: true,

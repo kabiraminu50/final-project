@@ -15,9 +15,9 @@ const blogPostSchema = new mongoose.Schema({
         required:true
 
     },
-    image:{
-        data:Buffer,
-        contentType:String
+    imageUrl:{
+        type:String,
+        required:true
     },
     author:{ type: mongoose.Schema.Types.ObjectId, 
         ref: 'user'}
@@ -25,4 +25,4 @@ const blogPostSchema = new mongoose.Schema({
 
 }, {timestamps:true})
 
-module.exports = mongoose.model('blogPsst',blogPostSchema)
+module.exports = mongoose.model('blogPost',blogPostSchema)
