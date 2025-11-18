@@ -115,14 +115,23 @@ const deleteBlogPost = async (req, res) => {
   }
 };
 
-// Update post
 const updateBlogPost = async (req, res) => {
   try {
     const { title, subtitle, content } = req.body;
 
+    const updateData = {};
+
+    if (title?.trim()) updateData.title = title;
+    if (subtitle?.trim()) updateData.subtitle = subtitle;
+    if (content?.trim()) updateData.content = content;
+
+    if (req.file) {
+      updateData.imageUrl = req.file.path;
+    }
+
     const updatedPost = await BlogPost.findByIdAndUpdate(
       req.params.id,
-      { title, subtitle, content },
+      updateData,
       { new: true, runValidators: true }
     );
 

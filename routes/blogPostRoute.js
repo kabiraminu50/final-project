@@ -10,7 +10,7 @@ router.post('/createblogpost',authMiddleware,uploadAfterAuth,createBlogPost)
 router.get('/getallpost',getAllPost);
 router.get('/getsinglepost/:id',authMiddleware,getSinglePost);
 router.delete('/deleteblogpost/:id',authMiddleware,deleteBlogPost);
-router.put('/updateblogpost/:id',authMiddleware,updateBlogPost);
+router.put('/updateblogpost/:id',authMiddleware,uploadAfterAuth,updateBlogPost);
 
 
 module.exports = router
